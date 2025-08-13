@@ -153,6 +153,9 @@ class apt (
   if $update['tries'] {
     assert_type(Integer, $update['tries'])
   }
+  if $update['ignore_errors'] {
+    assert_type(Boolean, $update['ignore_errors'])
+  }
 
   $_update = merge($apt::update_defaults, $update)
   include apt::update

@@ -43,10 +43,11 @@ class apt::params {
   }
 
   $update_defaults = {
-    'frequency' => 'reluctantly',
-    'loglevel'  => undef,
-    'timeout'   => undef,
-    'tries'     => undef,
+    'frequency'     => 'reluctantly',
+    'loglevel'      => undef,
+    'timeout'       => undef,
+    'tries'         => undef,
+    'ignore_errors' => false,
   }
 
   $proxy_defaults = {

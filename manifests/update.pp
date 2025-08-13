@@ -56,6 +56,13 @@ class apt::update {
   } else {
     $_refresh = true
   }
+
+  if $apt::_update['ignore_errors'] {
+    $_accepted_return_values = [0, 100]
+  } else {
+    $_accepted_return_values = [0]
+  }
+
   exec { 'apt_update':
     command     => "${apt::provider} update",
     loglevel    => $apt::_update['loglevel'],
@@ -64,5 +71,6 @@ class apt::update {
     timeout     => $apt::_update['timeout'],
     tries       => $apt::_update['tries'],
     try_sleep   => 1,
+    returns     => $_accepted_return_values,
   }
 }
