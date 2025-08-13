@@ -10,7 +10,7 @@ class apt::update {
   #on the first run, but if it's not run in awhile something is likely borked
   #with apt and we'd want to know about it.
 
-  case $::apt::_update['frequency'] {
+  case $apt::_update['frequency'] {
     'always': {
       $_kick_apt = true
     }
@@ -18,8 +18,8 @@ class apt::update {
       #compare current date with the apt_update_last_success fact to determine
       #if we should kick apt_update.
       $daily_threshold = (Integer(Timestamp().strftime('%s')) - 86400)
-      if $::apt_update_last_success {
-        if $::apt_update_last_success + 0 < $daily_threshold {
+      if $facts['apt_update_last_success'] {
+        if $facts['apt_update_last_success'] + 0 < $daily_threshold {
           $_kick_apt = true
         } else {
           $_kick_apt = false
@@ -33,8 +33,8 @@ class apt::update {
       #compare current date with the apt_update_last_success fact to determine
       #if we should kick apt_update.
       $weekly_threshold = (Integer(Timestamp().strftime('%s')) - 604800)
-      if $::apt_update_last_success {
-        if ( $::apt_update_last_success + 0 < $weekly_threshold ) {
+      if $facts['apt_update_last_success'] {
+        if ( $facts['apt_update_last_success'] + 0 < $weekly_threshold ) {
           $_kick_apt = true
         } else {
           $_kick_apt = false
@@ -56,13 +56,21 @@ class apt::update {
   } else {
     $_refresh = true
   }
+
+  if $apt::_update['ignore_errors'] {
+    $_accepted_return_values = [0, 100]
+  } else {
+    $_accepted_return_values = [0]
+  }
+
   exec { 'apt_update':
-    command     => "${::apt::provider} update",
-    loglevel    => $::apt::_update['loglevel'],
+    command     => "${apt::provider} update",
+    loglevel    => $apt::_update['loglevel'],
     logoutput   => 'on_failure',
     refreshonly => $_refresh,
-    timeout     => $::apt::_update['timeout'],
-    tries       => $::apt::_update['tries'],
-    try_sleep   => 1
+    timeout     => $apt::_update['timeout'],
+    tries       => $apt::_update['tries'],
+    try_sleep   => 1,
+    returns     => $_accepted_return_values,
   }
 }
