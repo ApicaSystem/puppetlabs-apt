@@ -1,10 +1,9 @@
 # @summary Provides defaults for the Apt module parameters.
-# 
+#
 # @api private
 #
 class apt::params {
-
-  if $::osfamily != 'Debian' {
+  if $facts['os']['family'] != 'Debian' {
     fail(translate('This module only works on Debian or derivatives like Ubuntu'))
   }
 
@@ -40,7 +39,7 @@ class apt::params {
     'list'   => {
       'path' => $sources_list_d,
       'ext'  => '.list',
-    }
+    },
   }
 
   $update_defaults = {
@@ -77,13 +76,13 @@ class apt::params {
     'src' => false,
   }
 
-  case $facts['os']['name']{
+  case $facts['os']['name'] {
     'Debian': {
-          $backports = {
-            'location' => 'http://deb.debian.org/debian',
-            'key'      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
-            'repos'    => 'main contrib non-free',
-          }
+      $backports = {
+        'location' => 'http://deb.debian.org/debian',
+        'key'      => 'A1BD8E9D78F7FE5C3E65D8AF8B48AD6246925553',
+        'repos'    => 'main contrib non-free',
+      }
       $ppa_options = undef
       $ppa_package = undef
     }
